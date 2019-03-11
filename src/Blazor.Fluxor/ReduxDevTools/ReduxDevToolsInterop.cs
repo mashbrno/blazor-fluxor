@@ -11,7 +11,7 @@ namespace Blazor.Fluxor.ReduxDevTools
 	/// </summary>
 	public static class ReduxDevToolsInterop
 	{
-
+		
 		internal const string DevToolsCallbackId = RootId + "DevToolsCallback";
 		internal static bool DevToolsBrowserPluginDetected { get; private set; }
 		internal static event EventHandler<JumpToStateCallback> JumpToState;
@@ -24,8 +24,11 @@ namespace Blazor.Fluxor.ReduxDevTools
 		private const string ToJsDispatchMethodName = "dispatch";
 		private const string ToJsInitMethodName = "init";
 
-		internal static void Init(IDictionary<string, object> state)
+		private static IJSRuntime _jsRuntime;
+
+		internal static void Init(IJSRuntime jsRuntime, IDictionary<string, object> state)
 		{
+			_jsRuntime = jsRuntime;
 			InvokeFluxorDevToolsMethod<object>(ToJsInitMethodName, state);
 		}
 
@@ -69,7 +72,9 @@ namespace Blazor.Fluxor.ReduxDevTools
 				return Task.FromResult(default(TRes));
 
 			string fullIdentifier = $"{FluxorDevToolsId}.{identifier}";
-			return JSRuntime.Current.InvokeAsync<TRes>(fullIdentifier, args);
+			
+			// HACK: was removed, should
+			return _jsRuntime.InvokeAsync<TRes>(fullIdentifier, args);
 		}
 
 		private static void OnJumpToState(JumpToStateCallback jumpToStateCallback)

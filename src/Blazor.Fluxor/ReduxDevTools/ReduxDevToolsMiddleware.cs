@@ -14,14 +14,16 @@ namespace Blazor.Fluxor.ReduxDevTools
 	/// </summary>
 	public class ReduxDevToolsMiddleware : Middleware
 	{
+		private readonly IJSRuntime _jsRuntime;
 		private int SequenceNumberOfCurrentState = 0;
 		private int SequenceNumberOfLatestState = 0;
 
 		/// <summary>
 		/// Creates a new instance of the middleware
 		/// </summary>
-		public ReduxDevToolsMiddleware()
+		public ReduxDevToolsMiddleware(IJSRuntime jsRuntime)
 		{
+			_jsRuntime = jsRuntime;
 			ReduxDevToolsInterop.JumpToState += OnJumpToState;
 			ReduxDevToolsInterop.Commit += OnCommit;
 		}
@@ -30,7 +32,7 @@ namespace Blazor.Fluxor.ReduxDevTools
 		public override void Initialize(IStore store)
 		{
 			base.Initialize(store);
-			ReduxDevToolsInterop.Init(GetState());
+			ReduxDevToolsInterop.Init(_jsRuntime, GetState());
 		}
 
 		/// <see cref="IMiddleware.MayDispatchAction(IAction)"/>
@@ -60,7 +62,7 @@ namespace Blazor.Fluxor.ReduxDevTools
 
 		private void OnCommit(object sender, EventArgs e)
 		{
-			ReduxDevToolsInterop.Init(GetState());
+			ReduxDevToolsInterop.Init(_jsRuntime, GetState());
 			SequenceNumberOfCurrentState = SequenceNumberOfLatestState;
 		}
 
