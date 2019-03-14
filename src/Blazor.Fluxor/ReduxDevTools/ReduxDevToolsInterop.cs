@@ -108,10 +108,10 @@ window.{FluxorDevToolsId} = new (function() {{
 			fluxorDevTools.send(action, state);
 		}};
 
-		// Notify Fluxor of the presence of the browser plugin
+		/* Notify Fluxor of the presence of the browser plugin */
 		const detectedMessage = {{
 			payload: {{
-				type: '{ReduxDevToolsInterop.FromJsDevToolsDetectedActionTypeName}'
+				type: '{FromJsDevToolsDetectedActionTypeName}'
 			}}
 		}};
 		const detectedMessageAsJson = JSON.stringify(detectedMessage);
