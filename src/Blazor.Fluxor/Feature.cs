@@ -33,6 +33,7 @@ namespace Blazor.Fluxor
 		protected readonly List<IReducer<TState>> Reducers = new List<IReducer<TState>>();
 
 		private MethodInfo BlazorComponentStateHasChangedMethod;
+		private MethodInfo BlazorComponentInvokeMethod;
 		private List<WeakReference<ComponentBase>> ObservingComponents = new List<WeakReference<ComponentBase>>();
 
 		/// <summary>
@@ -42,6 +43,7 @@ namespace Blazor.Fluxor
 		{
 			State = GetInitialState();
 			BlazorComponentStateHasChangedMethod = typeof(ComponentBase).GetMethod("StateHasChanged", BindingFlags.NonPublic | BindingFlags.Instance);
+			BlazorComponentInvokeMethod = typeof(ComponentBase).GetMethod("Invoke", BindingFlags.NonPublic | BindingFlags.Instance);
 		}
 
 		private TState _State;
@@ -103,7 +105,11 @@ namespace Blazor.Fluxor
 					// Keep a reference to the subscribers stop them being collected before we have finished
 					subscribers.Add(subscriber);
 					// Create a callback
-					callbacks.Add(() => BlazorComponentStateHasChangedMethod.Invoke(subscriber, null));
+					Action workItem = () => { BlazorComponentStateHasChangedMethod.Invoke(subscriber, null); };
+					callbacks.Add(() => {
+						BlazorComponentInvokeMethod.Invoke(subscriber, new object[] { workItem });
+						
+						});
 					// Add this observer to the replacement list
 					newStateChangedCallbacks.Add(subscription);
 				}
