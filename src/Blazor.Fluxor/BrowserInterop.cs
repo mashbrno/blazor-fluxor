@@ -22,10 +22,11 @@ namespace Blazor.Fluxor
 		{
 			string assemblyName = typeof(BrowserInterop).Assembly.GetName().Name;
 
+			// UGLY HACK: Timeout 500!
 			return $@"
 setTimeout(function() {{
 	DotNet.invokeMethodAsync('{assemblyName}', '{OnPageLoadedId}');
-}}, 0);
+}}, 500);
 ";
 		}
 
