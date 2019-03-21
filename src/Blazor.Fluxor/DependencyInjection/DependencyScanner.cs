@@ -13,16 +13,18 @@ namespace Blazor.Fluxor.DependencyInjection
 		internal static void Scan(this IServiceCollection serviceCollection,
 			IEnumerable<AssemblyScanSettings> assembliesToScan, IEnumerable<AssemblyScanSettings> scanWhitelist)
 		{
-			if (assembliesToScan == null || assembliesToScan.Count() == 0)
+			if (assembliesToScan == null || !assembliesToScan.Any())
 				throw new ArgumentNullException(nameof(assembliesToScan));
 			scanWhitelist = scanWhitelist ?? new List<AssemblyScanSettings>();
 
-			IEnumerable<Type> allCandidateTypes = assembliesToScan.SelectMany(x => x.Assembly.GetTypes())
-				.Union(scanWhitelist.SelectMany(x => x.Assembly.GetTypes()))
-				.Distinct();
-			IEnumerable<Assembly> allCandidateAssemblies = assembliesToScan.Select(x => x.Assembly)
+			List<Assembly> allCandidateAssemblies = assembliesToScan.Select(x => x.Assembly)
 				.Union(scanWhitelist.Select(x => x.Assembly))
-				.Distinct();
+				.Distinct()
+				.ToList();
+			IEnumerable<Type> allCandidateTypes = allCandidateAssemblies.SelectMany(a => a.GetTypes())
+				.Where(t => !t.IsAbstract)
+				.ToList();
+			
 
 			IEnumerable<AssemblyScanSettings> scanBlacklist =
 				MiddlewareScanner.FindMiddlewareLocations(allCandidateAssemblies);
