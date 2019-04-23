@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Services;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace Blazor.Fluxor.Routing
 {
