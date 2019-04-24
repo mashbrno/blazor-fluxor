@@ -22,7 +22,7 @@ namespace ReduxDevToolsIntegration.Client.Store.FetchData
 			try
 			{
 				WeatherForecast[] forecasts =
-					await HttpClient.GetJsonAsync<WeatherForecast[]>("/api/SampleData/WeatherForecasts");
+					await HttpClient.GetJsonAsync<WeatherForecast[]>("api/SampleData/WeatherForecasts");
 				dispatcher.Dispatch(new GetForecastDataSuccessAction(forecasts));
 			}
 			catch (Exception e)

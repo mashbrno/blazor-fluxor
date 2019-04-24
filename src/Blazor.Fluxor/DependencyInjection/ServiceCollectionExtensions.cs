@@ -49,6 +49,7 @@ namespace Blazor.Fluxor
 			// Scan for features and effects
 			if (Options.DependencyInjectionEnabled)
 			{
+				serviceCollection.AddScoped<ReduxDevTools.ReduxDevToolsInterop>();
 				DependencyScanner.Scan(
 					serviceCollection: serviceCollection,
 					assembliesToScan: Options.DependencyInjectionAssembliesToScan,

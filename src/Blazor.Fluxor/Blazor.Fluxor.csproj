@@ -7,13 +7,13 @@
     <Company />
     <Description>A zero-boilerplate Flux/Redux state library for Blazor</Description>
     <Copyright>Peter Morris</Copyright>
-    <PackageLicenseUrl>https://github.com/mrpmorris/blazor-fluxor/blob/master/LICENCE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/mrpmorris/blazor-fluxor</PackageProjectUrl>
     <PackageTags>blazor redux flux state</PackageTags>
     <RepositoryUrl>https://github.com/mrpmorris/blazor-fluxor</RepositoryUrl>
-    <AssemblyVersion>0.19.0.0</AssemblyVersion>
-    <FileVersion>0.19.0.0</FileVersion>
-    <Version>0.19.1.7</Version>
+    <AssemblyVersion>0.22.0.0</AssemblyVersion>
+    <FileVersion>0.22.0.0</FileVersion>
+    <Version>0.22.0.0-pre</Version>
+    <PackageLicenseFile>LICENCE</PackageLicenseFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -23,6 +23,13 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Browser" Version="3.0.0-preview4-19216-03" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0-preview4.19216.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENCE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

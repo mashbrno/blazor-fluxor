@@ -21,7 +21,7 @@ namespace FlightFinder.Client.Store
 			Airport[] airports = Array.Empty<Airport>();
 			try
 			{
-				airports = await HttpClient.GetJsonAsync<Airport[]>("/api/airports");
+				airports = await HttpClient.GetJsonAsync<Airport[]>("api/airports");
 			}
 			catch
 			{

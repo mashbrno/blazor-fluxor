@@ -8,8 +8,8 @@ This sample shows how to take the standard Visual Studio Blazor template and Flu
  
 ### Initializing the store
 Fluxor has the ability to write your own middleware libraries or use existing 3rd party libraries. As these libraries may require Javascript inserted into the hosting html you must first call `@Store.Initialize()` in your main layout page.
-1. In the Client project open the file `Shared\MainLayout.cshtml`
-2. Beneath the `@inherits BlazorLayoutComponent` line add `@inject Blazor.Fluxor.IStore Store`
+1. In the Client project open the file `Shared\MainLayout.razor`
+2. Beneath the `@inherits LayoutComponentBase` line add `@inject Blazor.Fluxor.IStore Store`
 3. Then add `@Store.Initialize()` - This will initialize the store and inject any required Javascript
 
 ### Automatic discovery of store features
@@ -62,7 +62,7 @@ namespace CounterSample.Client.Store.Counter
    * Your class should override the `GetInitialState()` method. This should return the initial state of this feature. This means whatever state you'd like this part of your application to contain *before* the user interacts with it.
  
 ### Displaying state in the user interface
-1. Edit `Pages\Counter.cshtml` and add the following `using` clauses.
+1. Edit `Pages\Counter.razor` and add the following `using` clauses.
 ```c#
 @using Blazor.Fluxor
 @using Store.Counter
@@ -89,7 +89,7 @@ namespace CounterSample.Client.Store.Counter
 }
 ```
    * In more complicated scenarios the action will have properties, in this case we don't need any as the action will always simply increment the current counter by 1.
-3. We now need to dispatch an instance of this action to the store whenever the user clicks the `Click me` button. Inject the following dependency to the top of the `Pages\Counter.cshtml` file.
+3. We now need to dispatch an instance of this action to the store whenever the user clicks the `Click me` button. Inject the following dependency to the top of the `Pages\Counter.razor` file.
 ```c#
 @inject IDispatcher Dispatcher
 ```

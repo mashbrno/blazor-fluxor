@@ -4,9 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <LangVersion>7.3</LangVersion>
-
-    <!-- Temporary workaround for a VS build issue -->
-    <BlazorRebuildOnFileChange>false</BlazorRebuildOnFileChange>
+    <RazorLangVersion>3.0</RazorLangVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -9,9 +9,9 @@ namespace Blazor.Fluxor.ReduxDevTools
 	/// <summary>
 	/// Interop for dev tools
 	/// </summary>
-	public static class ReduxDevToolsInterop
+	public class ReduxDevToolsInterop
 	{
-		
+
 		internal const string DevToolsCallbackId = RootId + "DevToolsCallback";
 		internal static bool DevToolsBrowserPluginDetected { get; private set; }
 		internal static event EventHandler<JumpToStateCallback> JumpToState;
@@ -23,16 +23,23 @@ namespace Blazor.Fluxor.ReduxDevTools
 		private const string FromJsDevToolsDetectedActionTypeName = "detected";
 		private const string ToJsDispatchMethodName = "dispatch";
 		private const string ToJsInitMethodName = "init";
+		private readonly IJSRuntime JSRuntime;
 
-		private static IJSRuntime _jsRuntime;
-
-		internal static void Init(IJSRuntime jsRuntime, IDictionary<string, object> state)
+		/// <summary>
+		/// Creates an instance of the dev tools interop
+		/// </summary>
+		/// <param name="jsRuntime"></param>
+		public ReduxDevToolsInterop(IJSRuntime jsRuntime)
 		{
-			_jsRuntime = jsRuntime;
+			JSRuntime = jsRuntime;
+		}
+
+		internal void Init(IDictionary<string, object> state)
+		{
 			InvokeFluxorDevToolsMethod<object>(ToJsInitMethodName, state);
 		}
 
-		internal static void Dispatch(IAction action, IDictionary<string, object> state)
+		internal void Dispatch(IAction action, IDictionary<string, object> state)
 		{
 			InvokeFluxorDevToolsMethod<object>(ToJsDispatchMethodName, new ActionInfo(action), state);
 		}
@@ -66,15 +73,13 @@ namespace Blazor.Fluxor.ReduxDevTools
 			}
 		}
 
-		private static Task<TRes> InvokeFluxorDevToolsMethod<TRes>(string identifier, params object[] args)
+		private Task<TRes> InvokeFluxorDevToolsMethod<TRes>(string identifier, params object[] args)
 		{
 			if (!DevToolsBrowserPluginDetected)
 				return Task.FromResult(default(TRes));
 
 			string fullIdentifier = $"{FluxorDevToolsId}.{identifier}";
-			
-			// HACK: was removed, should
-			return _jsRuntime.InvokeAsync<TRes>(fullIdentifier, args);
+			return JSRuntime.InvokeAsync<TRes>(fullIdentifier, args);
 		}
 
 		private static void OnJumpToState(JumpToStateCallback jumpToStateCallback)
@@ -108,10 +113,10 @@ window.{FluxorDevToolsId} = new (function() {{
 			fluxorDevTools.send(action, state);
 		}};
 
-		/* Notify Fluxor of the presence of the browser plugin */
+		// Notify Fluxor of the presence of the browser plugin
 		const detectedMessage = {{
 			payload: {{
-				type: '{FromJsDevToolsDetectedActionTypeName}'
+				type: '{ReduxDevToolsInterop.FromJsDevToolsDetectedActionTypeName}'
 			}}
 		}};
 		const detectedMessageAsJson = JSON.stringify(detectedMessage);

@@ -71,7 +71,7 @@ namespace WeatherForecastSample.Client.Store.FetchData
 
 ## Databinding to the feature state
 We need this action to be dispatched through the store when the FetchData page is loaded.
-1. Edit `Pages\FetchData.cshtml`
+1. Edit `Pages\FetchData.razor`
 2. Set the code at the top of the page to the following
 ```c#
 @page "/fetchdata"
@@ -104,7 +104,7 @@ We now need to change the rest of the page in the following ways
 6. Look for the `@foreach` statement and change it to `@foreach (var forecast in FetchDataState.Value.Forecasts)`
 
 ## Dispatching the action when the page loads
-The code at the bottom of the `FetchData.cshtml` page calls out to a server. We want to move this code out to an effect that is triggered by the `GetForecastDataAction`. So we need to change the code in the `OnInitAsync` method to the following
+The code at the bottom of the `FetchData.razor` page calls out to a server. We want to move this code out to an effect that is triggered by the `GetForecastDataAction`. So we need to change the code in the `OnInitAsync` method to the following
 ```c#
 @functions {
     protected override void OnInit()
@@ -115,7 +115,7 @@ The code at the bottom of the `FetchData.cshtml` page calls out to a server. We 
 }
 ```
 
-The entirety of the `FetchData.cshtml` file should look like this
+The entirety of the `FetchData.razor` file should look like this
 ```c#
 @page "/fetchdata"
 @using Blazor.Fluxor

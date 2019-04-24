@@ -1,8 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace FlightFinder.Server
 {
@@ -10,14 +11,15 @@ namespace FlightFinder.Server
 	{
 		public static void Main(string[] args)
 		{
-			CreateHostBuilder(args).Build().Run();
+			BuildWebHost(args).Run();
 		}
 
-		public static IHostBuilder CreateHostBuilder(string[] args) => Host
-			.CreateDefaultBuilder(args)
-			.ConfigureWebHostDefaults(webBuilder =>
-			{
-				webBuilder.UseStartup<Startup>();
-			});
+		public static IWebHost BuildWebHost(string[] args) =>
+			WebHost.CreateDefaultBuilder(args)
+				.UseConfiguration(new ConfigurationBuilder()
+					.AddCommandLine(args)
+					.Build())
+				.UseStartup<Startup>()
+				.Build();
 	}
 }
