@@ -1,4 +1,6 @@
-# Blazor-Fluxor
+# Blazor-Fluxor 
+![](./images/blazor-fluxor-logo.png)
+
 Blazor-Fluxor is a zero boilerplate Flux/Redux library for the new [Microsoft aspdotnet Blazor project]. 
 
 The aim of Fluxor is to create a single-state store approach to front-end development in Blazor without the headaches typically associated with other implementations, such as the overwhelming amount of boiler-plate code required just to add a very basic feature.
@@ -18,6 +20,8 @@ More sample projects will be added as the framework develops.
   - [Blazor Flight Finder] - A conversion of the official Blazor `Flight Finder` demo.
 
 ## What's new
+### New in 0.23.0
+ - Upgrade to latest packages (.net core v3.0.0-preview5-19227-01)
 ### New in 0.22.0
  - Upgrade to latest packages (.net core v3.0.0-preview4-19216-03)
  - Rename *.cshtml to *.razor

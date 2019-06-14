@@ -15,6 +15,10 @@ body {
     display: flex;
 }
 
+app {
+    display: flex;
+}
+
 #search-and-results-area {
     display: flex;
     flex: auto;
