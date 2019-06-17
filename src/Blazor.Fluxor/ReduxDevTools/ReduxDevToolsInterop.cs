@@ -3,6 +3,7 @@ using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Json = System.Text.Json.Serialization.JsonSerializer;
 
 namespace Blazor.Fluxor.ReduxDevTools
 {
@@ -55,7 +56,7 @@ namespace Blazor.Fluxor.ReduxDevTools
 			if (string.IsNullOrWhiteSpace(messageAsJson))
 				return;
 
-			var message = Json.Deserialize<BaseCallbackObject>(messageAsJson);
+			var message = Json.Parse<BaseCallbackObject>(messageAsJson);
 			switch (message?.payload?.type)
 			{
 				case FromJsDevToolsDetectedActionTypeName:
@@ -68,7 +69,7 @@ namespace Blazor.Fluxor.ReduxDevTools
 
 				case "JUMP_TO_STATE":
 				case "JUMP_TO_ACTION":
-					OnJumpToState(Json.Deserialize<JumpToStateCallback>(messageAsJson));
+					OnJumpToState(Json.Parse<JumpToStateCallback>(messageAsJson));
 					break;
 			}
 		}

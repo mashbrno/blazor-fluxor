@@ -1,17 +1,16 @@
 ﻿using Blazor.Fluxor.ReduxDevTools.CallbackObjects;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
-using System.Reflection;
+using System.Text.Json;
+using Json = System.Text.Json.Serialization.JsonSerializer;
 
 namespace Blazor.Fluxor.ReduxDevTools
 {
 	/// <summary>
 	/// Middleware for interacting with the Redux Devtools extension for Chrome
 	/// </summary>
+	[Obsolete("Do not use until System.Text.Json.Serialization.JsonSerializer.Parse bug has been fixed https://github.com/dotnet/corefx/issues/38435")]
 	public class ReduxDevToolsMiddleware : Middleware
 	{
 		private int SequenceNumberOfCurrentState = 0;
@@ -54,7 +53,7 @@ namespace Blazor.Fluxor.ReduxDevTools
 
 		private IDictionary<string, object> GetState()
 		{
-			var state = (IDictionary<string, object>)new ExpandoObject();
+			var state = new Dictionary<string, object>();
 			foreach (IFeature feature in Store.Features.Values.OrderBy(x => x.GetName()))
 				state[feature.GetName()] = feature.GetState();
 			return state;
@@ -71,27 +70,19 @@ namespace Blazor.Fluxor.ReduxDevTools
 			SequenceNumberOfCurrentState = e.payload.actionId;
 			using (Store.BeginInternalMiddlewareChange())
 			{
-				var newFeatureStates = (IDictionary<string, object>)Json.Deserialize<object>(e.state);
+				var newFeatureStates = Json.Parse<Dictionary<string, object>>(e.state);
 				foreach (KeyValuePair<string, object> newFeatureState in newFeatureStates)
 				{
 					// Get the feature with the given name
 					if (!Store.Features.TryGetValue(newFeatureState.Key, out IFeature feature))
 						continue;
 
-					// Get the generic method of JsonUtil.Deserialize<> so we have the correct object type for the state
-					string deserializeMethodName = nameof(Json.Deserialize);
-					MethodInfo deserializeMethodInfo = typeof(Json)
-						.GetMethod(deserializeMethodName)
-						.GetGenericMethodDefinition()
-						.MakeGenericMethod(new Type[] { feature.GetStateType() });
+					JsonElement serializedFeatureStateElement = (JsonElement)newFeatureState.Value;
+					object stronglyTypedFeatureState = Json.Parse(serializedFeatureStateElement.ToString(), feature.GetStateType());
 
-					// Get the state we were given as a json string
-					string serializedFeatureState = newFeatureState.Value?.ToString();
-					// Deserialize that json using the generic method, so we get an object of the correct type
-					object stronglyTypedFeatureState =
-						string.IsNullOrEmpty(serializedFeatureState)
-						? null
-						: deserializeMethodInfo.Invoke(null, new object[] { serializedFeatureState });
+					byte[] bytes = Json.ToUtf8Bytes(stronglyTypedFeatureState, feature.GetStateType());
+					string json = System.Text.UTF8Encoding.UTF8.GetString(bytes);
+					System.Diagnostics.Debug.WriteLine("Feature json " + json);
 
 					// Now set the feature's state to the deserialized object
 					feature.RestoreState(stronglyTypedFeatureState);
