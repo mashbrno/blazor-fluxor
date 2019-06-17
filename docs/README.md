@@ -20,24 +20,28 @@ More sample projects will be added as the framework develops.
   - [Blazor Flight Finder] - A conversion of the official Blazor `Flight Finder` demo.
 
 ## What's new
+### New in 0.24.0
+**NOTE**: Due to a [bug in System.Text.Json](https://github.com/dotnet/corefx/issues/38435) the ReduxDevTools do not work in this release.
+ - Upgraded to latest packages (.net core v3.0.0-preview6.19307.2)
+
 ### New in 0.23.0
- - Upgrade to latest packages (.net core v3.0.0-preview5-19227-01)
+ - Upgraded to latest packages (.net core v3.0.0-preview5-19227-01)
 ### New in 0.22.0
- - Upgrade to latest packages (.net core v3.0.0-preview4-19216-03)
+ - Upgraded to latest packages (.net core v3.0.0-preview4-19216-03)
  - Rename *.cshtml to *.razor
  - Change project start up code to reflect most recent approach
 ### New in 0.21.0
- - Upgrade to latest packages (.net core v3.0.0-preview3-19153-02)
+ - Upgraded to latest packages (.net core v3.0.0-preview3-19153-02)
 ### New in 0.20.0
- - Upgrade to Blazor 0.9.0
+ - Upgraded to Blazor 0.9.0
 ### New in 0.19.0
- - Upgrade to Blazor 0.8.0 (Thanks to [@chris_sainty](https://twitter.com/chris_sainty) on Twitter)
+ - Upgraded to Blazor 0.8.0 (Thanks to [@chris_sainty](https://twitter.com/chris_sainty) on Twitter)
 ### New in 0.18.0
  - Changed UseDependencyInjection to use `AddScoped` instead of `AddSingleton` so server-side Blazor apps do not share the same store across clients.
 ### New in 0.17.0
- - Upgrade to Blazor 0.7.0
+ - Upgraded to Blazor 0.7.0
 ### New in 0.16.0
- - Upgrade to Blazor 0.6.0
+ - Upgraded to Blazor 0.6.0
  - Added a Task to IStore named `Initialized` that can be awaited in `OnInitAsync`
 ### New in 0.15.1
  - Added setTimeout workaround because Blazor won't allow calling StateHasChanged when the page loads
