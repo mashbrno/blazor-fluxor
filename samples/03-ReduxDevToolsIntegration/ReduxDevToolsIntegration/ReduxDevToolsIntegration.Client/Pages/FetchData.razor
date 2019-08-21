@@ -49,9 +49,9 @@
 
 
 @code {
-	protected override void OnInit()
+	protected override void OnInitialized()
 	{
-		base.OnInit();
+		base.OnInitialized();
 		Dispatcher.Dispatch(new GetForecastDataAction());
 	}
 }

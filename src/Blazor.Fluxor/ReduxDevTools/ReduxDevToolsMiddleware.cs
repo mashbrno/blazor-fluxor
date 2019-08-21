@@ -3,19 +3,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using Json = System.Text.Json.Serialization.JsonSerializer;
+using Json = System.Text.Json.JsonSerializer;
 
 namespace Blazor.Fluxor.ReduxDevTools
 {
 	/// <summary>
 	/// Middleware for interacting with the Redux Devtools extension for Chrome
 	/// </summary>
-	[Obsolete("Do not use until System.Text.Json.Serialization.JsonSerializer.Parse bug has been fixed https://github.com/dotnet/corefx/issues/38435")]
 	public class ReduxDevToolsMiddleware : Middleware
 	{
 		private int SequenceNumberOfCurrentState = 0;
 		private int SequenceNumberOfLatestState = 0;
 		private readonly ReduxDevToolsInterop ReduxDevToolsInterop;
+		private readonly JsonSerializerOptions SerializationOptions;
 
 		/// <summary>
 		/// Creates a new instance of the middleware
@@ -23,6 +23,10 @@ namespace Blazor.Fluxor.ReduxDevTools
 		public ReduxDevToolsMiddleware(ReduxDevToolsInterop reduxDevToolsInterop)
 		{
 			ReduxDevToolsInterop = reduxDevToolsInterop;
+			SerializationOptions = new JsonSerializerOptions {
+				PropertyNameCaseInsensitive = true,
+				WriteIndented = false
+			};
 			ReduxDevToolsInterop.JumpToState += OnJumpToState;
 			ReduxDevToolsInterop.Commit += OnCommit;
 		}
@@ -34,14 +38,14 @@ namespace Blazor.Fluxor.ReduxDevTools
 			ReduxDevToolsInterop.Init(GetState());
 		}
 
-		/// <see cref="IMiddleware.MayDispatchAction(IAction)"/>
-		public override bool MayDispatchAction(IAction action)
+		/// <see cref="IMiddleware.MayDispatchAction(object)"/>
+		public override bool MayDispatchAction(object action)
 		{
 			return SequenceNumberOfCurrentState == SequenceNumberOfLatestState;
 		}
 
-		/// <see cref="IMiddleware.AfterDispatch(IAction)"/>
-		public override void AfterDispatch(IAction action)
+		/// <see cref="IMiddleware.AfterDispatch(object)"/>
+		public override void AfterDispatch(object action)
 		{
 			ReduxDevToolsInterop.Dispatch(action, GetState());
 
@@ -70,19 +74,18 @@ namespace Blazor.Fluxor.ReduxDevTools
 			SequenceNumberOfCurrentState = e.payload.actionId;
 			using (Store.BeginInternalMiddlewareChange())
 			{
-				var newFeatureStates = Json.Parse<Dictionary<string, object>>(e.state);
+				var newFeatureStates = Json.Deserialize<Dictionary<string, object>>(e.state);
 				foreach (KeyValuePair<string, object> newFeatureState in newFeatureStates)
 				{
 					// Get the feature with the given name
 					if (!Store.Features.TryGetValue(newFeatureState.Key, out IFeature feature))
 						continue;
 
-					JsonElement serializedFeatureStateElement = (JsonElement)newFeatureState.Value;
-					object stronglyTypedFeatureState = Json.Parse(serializedFeatureStateElement.ToString(), feature.GetStateType());
-
-					byte[] bytes = Json.ToUtf8Bytes(stronglyTypedFeatureState, feature.GetStateType());
-					string json = System.Text.UTF8Encoding.UTF8.GetString(bytes);
-					System.Diagnostics.Debug.WriteLine("Feature json " + json);
+					var serializedFeatureStateElement = (JsonElement)newFeatureState.Value;
+					object stronglyTypedFeatureState = Json.Deserialize(
+						json: serializedFeatureStateElement.ToString(),
+						returnType: feature.GetStateType(),
+						options: SerializationOptions);
 
 					// Now set the feature's state to the deserialized object
 					feature.RestoreState(stronglyTypedFeatureState);

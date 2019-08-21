@@ -20,10 +20,16 @@ More sample projects will be added as the framework develops.
   - [Blazor Flight Finder] - A conversion of the official Blazor `Flight Finder` demo.
 
 ## What's new
+### New in 0.27.0
+ - Update to Blazor preview 8
+### New in 0.26.0
+ - Update to Blazor preview 7
+ - Alter the icon that appears in NuGet
+### New in 0.25.0
+ - Remove IAction. Actions may now be any type of object.
 ### New in 0.24.0
 **NOTE**: Due to a [bug in System.Text.Json](https://github.com/dotnet/corefx/issues/38435) the ReduxDevTools do not work in this release.
  - Upgraded to latest packages (.net core v3.0.0-preview6.19307.2)
-
 ### New in 0.23.0
  - Upgraded to latest packages (.net core v3.0.0-preview5-19227-01)
 ### New in 0.22.0
@@ -42,7 +48,7 @@ More sample projects will be added as the framework develops.
  - Upgraded to Blazor 0.7.0
 ### New in 0.16.0
  - Upgraded to Blazor 0.6.0
- - Added a Task to IStore named `Initialized` that can be awaited in `OnInitAsync`
+ - Added a Task to IStore named `Initialized` that can be awaited in `OnInitializedAsync`
 ### New in 0.15.1
  - Added setTimeout workaround because Blazor won't allow calling StateHasChanged when the page loads
 ### New in 0.15.0
@@ -57,7 +63,7 @@ Issues fixed
  - Effects and Middlewares must now call `IDispatcher.Dispatch()` to dispatch actions.
 
 ### New in 0.13.0
- - Added state change observer pattern. Calling `SomeInjectedState.Changed(this, StateHasChanged)` in a component's `OnInit` method will subscribe to all state changes triggered by other components.
+ - Added state change observer pattern. Calling `SomeInjectedState.Changed(this, StateHasChanged)` in a component's `OnInitialized` method will subscribe to all state changes triggered by other components.
  - Changed `IState.Current` to `IState.Value`
  - Modified the official Blazor `Flight Finder` demo to use Fluxor. Status is incomplete but functional.
 
