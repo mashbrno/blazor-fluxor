@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Blazor.Fluxor
 {
@@ -43,7 +44,7 @@ namespace Blazor.Fluxor
 		{
 			State = GetInitialState();
 			BlazorComponentStateHasChangedMethod = typeof(ComponentBase).GetMethod("StateHasChanged", BindingFlags.NonPublic | BindingFlags.Instance);
-			BlazorComponentInvokeMethod = typeof(ComponentBase).GetMethod("Invoke", BindingFlags.NonPublic | BindingFlags.Instance);
+			BlazorComponentInvokeMethod = typeof(ComponentBase).GetMethod("InvokeAsync", BindingFlags.NonPublic | BindingFlags.Instance, null, CallingConventions.Any, new Type[] { typeof(Action) }, null);
 		}
 
 		private TState _State;
@@ -109,10 +110,11 @@ namespace Blazor.Fluxor
 					subscribers.Add(subscriber);
 					// Create a callback
 					Action workItem = () => { BlazorComponentStateHasChangedMethod.Invoke(subscriber, null); };
-					callbacks.Add(() => {
-						BlazorComponentInvokeMethod.Invoke(subscriber, new object[] { workItem });
-						
-						});
+					callbacks.Add(() =>
+					{
+						var res = (Task)BlazorComponentInvokeMethod.Invoke(subscriber, new object[] { workItem });
+						res.Wait();
+					});
 					// Add this observer to the replacement list
 					newStateChangedCallbacks.Add(subscription);
 				}

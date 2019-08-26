@@ -22,24 +22,13 @@ namespace Blazor.Fluxor
 		{
 			string assemblyName = typeof(BrowserInterop).Assembly.GetName().Name;
 
-			return $@"var __intervalid;
-var invokenet = function () 
-  {{ 
-if (typeof DotNet != 'undefined') {{
-    
-	    DotNet.invokeMethodAsync('{assemblyName}', '{OnPageLoadedId}').catch(function (err) {{ 
-            setTimeout(invokenet, 100) 
-        }});
-    if (__intervalid)
-		clearTimeout(__intervalid);
-    
-}}
-else 
- {{
-	__intervalid = setTimeout(invokenet, 100);	
-}}
-}}
-invokenet();
+			return $@"
+setTimeout(function() {{
+	if (window.DotNet) {{
+		DotNet.invokeMethodAsync('Blazor.Fluxor', 'Blazor.Fluxor.OnPageLoaded');
+	}}
+}}, 20);
+
 ";
 		}
 
