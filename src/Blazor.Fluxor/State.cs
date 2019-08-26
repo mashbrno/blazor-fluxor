@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 
 namespace Blazor.Fluxor
 {
@@ -22,6 +23,12 @@ namespace Blazor.Fluxor
 
 		/// <see cref="IState{TState}.Value"/>
 		public TState Value => Feature.State;
+
+		public event EventHandler<TState> StateChanged
+		{
+			add { Feature.StateChanged += value; }
+			remove { Feature.StateChanged -= value; }
+		}
 
 		/// <see cref="IState.Subscribe(ComponentBase)"/>
 		public void Subscribe(ComponentBase subscriber) => Feature.Subscribe(subscriber);

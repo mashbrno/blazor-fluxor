@@ -47,6 +47,9 @@ namespace Blazor.Fluxor
 		}
 
 		private TState _State;
+
+		public event EventHandler<TState> StateChanged;
+
 		/// <see cref="IFeature{TState}.State"/>
 		public virtual TState State
 		{
@@ -56,7 +59,7 @@ namespace Blazor.Fluxor
 				bool stateHasChanged = !Object.ReferenceEquals(_State, value);
 				_State = value;
 				if (stateHasChanged)
-					TriggerStateChangedCallbacks();
+					TriggerStateChangedCallbacks(value);
 			}
 		}
 
@@ -90,7 +93,7 @@ namespace Blazor.Fluxor
 			ObservingComponents.Add(subscriberReference);
 		}
 
-		private void TriggerStateChangedCallbacks()
+		private void TriggerStateChangedCallbacks(TState newState)
 		{
 			var subscribers = new List<ComponentBase>();
 			var callbacks = new List<Action>();
@@ -123,6 +126,8 @@ namespace Blazor.Fluxor
 			// Keep observers and callbacks alive until after we have called them
 			GC.KeepAlive(subscribers);
 			GC.KeepAlive(callbacks);
+
+			StateChanged?.Invoke(this, newState);
 		}
 	}
 }
