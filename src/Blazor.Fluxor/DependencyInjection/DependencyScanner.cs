@@ -11,11 +11,11 @@ namespace Blazor.Fluxor.DependencyInjection
 	internal static class DependencyScanner
 	{
 		internal static void Scan(this IServiceCollection serviceCollection,
-			IEnumerable<AssemblyScanSettings> assembliesToScan, IEnumerable<AssemblyScanSettings> scanWhitelist)
+			IEnumerable<AssemblyScanSettings> assembliesToScan, IEnumerable<AssemblyScanSettings> scanIncludeList)
 		{
 			if (assembliesToScan == null || !assembliesToScan.Any())
 				throw new ArgumentNullException(nameof(assembliesToScan));
-			scanWhitelist = scanWhitelist ?? new List<AssemblyScanSettings>();
+			scanIncludeList = scanIncludeList ?? new List<AssemblyScanSettings>();
 
 			List<Assembly> allCandidateAssemblies = assembliesToScan.Select(x => x.Assembly)
 				.Union(scanWhitelist.Select(x => x.Assembly))
@@ -26,12 +26,12 @@ namespace Blazor.Fluxor.DependencyInjection
 				.ToList();
 			
 
-			IEnumerable<AssemblyScanSettings> scanBlacklist =
+			IEnumerable<AssemblyScanSettings> scanExcludeList =
 				MiddlewareScanner.FindMiddlewareLocations(allCandidateAssemblies);
 			allCandidateTypes = AssemblyScanSettings.Filter(
 				types: allCandidateTypes,
-				scanBlacklist: scanBlacklist,
-				scanWhitelist: scanWhitelist);
+				scanExcludeList: scanExcludeList,
+				scanIncludeList: scanIncludeList);
 
 
 			IEnumerable<DiscoveredReducerInfo> discoveredReducerInfos =

@@ -49,6 +49,9 @@ namespace Blazor.Fluxor
 
 		private TState _State;
 
+		/// <summary>
+		/// Event that is executed whenever the state changes
+		/// </summary>
 		public event EventHandler<TState> StateChanged;
 
 		/// <see cref="IFeature{TState}.State"/>
