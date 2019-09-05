@@ -4,24 +4,24 @@ using Microsoft.AspNetCore.Components.Routing;
 namespace Blazor.Fluxor.Routing
 {
 	/// <summary>
-	/// Adds support for routing <see cref="Microsoft.AspNetCore.Components.IUriHelper"/>
+	/// Adds support for routing <see cref="Microsoft.AspNetCore.Components.NavigationManager"/>
 	/// via a Fluxor store.
 	/// </summary>
 	public class RoutingMiddleware : Middleware
 	{
-		private readonly IUriHelper UriHelper;
+		private readonly NavigationManager NavigationManager;
 		private readonly IFeature<RoutingState> Feature;
 
 		/// <summary>
 		/// Creates a new instance of the routing middleware
 		/// </summary>
-		/// <param name="uriHelper">Uri helper</param>
+		/// <param name="navigationManager">Uri helper</param>
 		/// <param name="feature">The routing feature</param>
-		public RoutingMiddleware(IUriHelper uriHelper, IFeature<RoutingState> feature)
+		public RoutingMiddleware(NavigationManager navigationManager, IFeature<RoutingState> feature)
 		{
-			UriHelper = uriHelper;
+			NavigationManager = navigationManager;
 			Feature = feature;
-			UriHelper.OnLocationChanged += OnLocationChanged;
+			NavigationManager.LocationChanged += LocationChanged;
 		}
 
 
@@ -30,19 +30,19 @@ namespace Blazor.Fluxor.Routing
 		{
 			base.Initialize(store);
 			// If the URL changed before we initialized then dispatch an action
-			Store.Dispatch(new Go(UriHelper.GetAbsoluteUri()));
+			Store.Dispatch(new Go(NavigationManager.Uri));
 		}
 
 		/// <see cref="Middleware.OnInternalMiddlewareChangeEnding"/>
 		protected override void OnInternalMiddlewareChangeEnding()
 		{
-			if (Feature.State.Uri != UriHelper.GetAbsoluteUri())
-				UriHelper.NavigateTo(Feature.State.Uri);
+			if (Feature.State.Uri != NavigationManager.Uri)
+				NavigationManager.NavigateTo(Feature.State.Uri);
 		}
 
-		private void OnLocationChanged(object sender, LocationChangedEventArgs e)
+		private void LocationChanged(object sender, LocationChangedEventArgs e)
 		{
-			string fullUri = UriHelper.ToAbsoluteUri(e.Location).ToString();
+			string fullUri = NavigationManager.ToAbsoluteUri(e.Location).ToString();
 			if (Store != null && !IsInsideMiddlewareChange && fullUri != Feature.State.Uri)
 				Store.Dispatch(new Go(e.Location));
 		}

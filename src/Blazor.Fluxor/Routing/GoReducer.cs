@@ -2,6 +2,6 @@
 {
 	internal class GoReducer : Reducer<RoutingState, Go>
 	{
-		public override RoutingState Reduce(RoutingState state, Go action) => new RoutingState(action.NewUri);
+		public override RoutingState Reduce(RoutingState state, Go action) => new RoutingState(action.NewUri ?? "");
 	}
 }

@@ -6,20 +6,20 @@ namespace Blazor.Fluxor.Routing
 {
 	internal class GoEffect : Effect<Go>
 	{
-		private readonly IUriHelper UriHelper;
+		private readonly NavigationManager NavigationManager;
 
-		public GoEffect(IUriHelper uriHelper)
+		public GoEffect(NavigationManager navigationManager)
 		{
-			UriHelper = uriHelper;
+			NavigationManager = navigationManager;
 		}
 
 		protected override Task HandleAsync(Go action, IDispatcher dispatcher)
 		{
-			Uri fullUri = UriHelper.ToAbsoluteUri(action.NewUri);
-			if (fullUri.ToString() != UriHelper.GetAbsoluteUri())
+			Uri fullUri = NavigationManager.ToAbsoluteUri(action.NewUri);
+			if (fullUri.ToString() != NavigationManager.Uri)
 			{
 				// Only navigate if we are not already at the URI specified
-				UriHelper.NavigateTo(action.NewUri);
+				NavigationManager.NavigateTo(action.NewUri);
 			}
 			return Task.CompletedTask;
 		}

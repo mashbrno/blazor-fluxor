@@ -21,8 +21,9 @@ More sample projects will be added as the framework develops.
   - [MultiActionReducer sample] - A sample demonstrating how to implement multiple reducers in a single reducer class.
 
 ## What's new
-### New in 0.31.0 (Not yet released)
+### New in 0.31.0 
 	- Remove White=Positive / Black=Negative terms - Use Include/Exclude instead.
+	- Update to Blazor preview 9
 ### New in 0.30.0
 	- Added a new class `MultiActionReducer<TState>` that allows you to combine multiple reducers into a single class.
 ### New in 0.29.0

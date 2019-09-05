@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Blazor.Fluxor.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.RenderTree;
 
 namespace Blazor.Fluxor

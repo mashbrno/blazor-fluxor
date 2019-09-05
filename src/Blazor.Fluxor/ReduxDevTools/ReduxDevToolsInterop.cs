@@ -3,6 +3,7 @@ using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Xml.Schema;
 using Json = System.Text.Json.JsonSerializer;
 
 namespace Blazor.Fluxor.ReduxDevTools
@@ -74,13 +75,13 @@ namespace Blazor.Fluxor.ReduxDevTools
 			}
 		}
 
-		private Task<TRes> InvokeFluxorDevToolsMethod<TRes>(string identifier, params object[] args)
+		private ValueTask<TResult> InvokeFluxorDevToolsMethod<TResult>(string identifier, params object[] args)
 		{
 			if (!DevToolsBrowserPluginDetected)
-				return Task.FromResult(default(TRes));
+				return new ValueTask<TResult>(default(TResult));
 
 			string fullIdentifier = $"{FluxorDevToolsId}.{identifier}";
-			return JSRuntime.InvokeAsync<TRes>(fullIdentifier, args);
+			return JSRuntime.InvokeAsync<TResult>(fullIdentifier, args);
 		}
 
 		private static void OnJumpToState(JumpToStateCallback jumpToStateCallback)

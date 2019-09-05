@@ -13,14 +13,14 @@ namespace Blazor.Fluxor
 	///		class can be used so that a variety of actions can be reduced from a single class.
 	///	</para>
 	///	<example>
-	///		public class SearchReducers : MultiActionReducer<SearchState>
+	///		public class SearchReducers : MultiActionReducer&lt;SearchState&gt;
 	///		{
 	///			public SearchReducers()
 	///			{
-	///				AddActionReducer<Search>((state, action) => 
+	///				AddActionReducer&lt;Search&gt;((state, action) =&gt; 
 	///					new StateState(isSearching: true, searchItems: null));
 	///
-	///				AddActionReduer<SearchResponse>((state, response) =>
+	///				AddActionReduer&lt;SearchResponse&gt;((state, response) =&gt;
 	///					new StateSearch(isSearching: false, searchItems: response.Items));
 	///			}
 	///		}
@@ -45,8 +45,8 @@ namespace Blazor.Fluxor
 		/// </summary>
 		/// <typeparam name="TAction">The action type the <paramref name="reducer"/> code responds to</typeparam>
 		/// <param name="reducer">
-		///		A function or method that accepts <typeparamref name="TState"/> and <typeparamref cref="TAction"/>
-		///		and returns a <see cref="TState"/>.
+		///		A function or method that accepts <typeparamref name="TState"/> and <typeparamref name="TAction"/>
+		///		and returns a <typeparamref name="TState"/>.
 		///	</param>
 		protected void AddActionReducer<TAction>(Func<TState, TAction, TState> reducer)
 			=> AddActionReducer(typeof(TAction), (TState state, object action) => reducer(state, (TAction)action));
@@ -59,8 +59,8 @@ namespace Blazor.Fluxor
 		///		The action type this <paramref name="reducer"/> code responds to.
 		/// </param>
 		/// <param name="reducer">
-		///		A function or method that accepts <see cref="TState"/> and an <see cref="object"/> action,
-		///		and returns a <see cref="TState"/>.
+		///		A function or method that accepts <typeparamref name="TState"/> and an <see cref="object"/> action,
+		///		and returns a <typeparamref name="TState"/>.
 		///	</param>
 		protected void AddActionReducer(Type actionType, Func<TState, object, TState> reducer)
 			=> ReducersByActionType.Add(actionType, reducer);

@@ -21,10 +21,10 @@ namespace Blazor.Fluxor.Routing
 		/// <summary>
 		/// Creates a new instance of the routing feature
 		/// </summary>
-		/// <param name="uriHelper">Uri helper</param>
-		public RoutingFeature(IUriHelper uriHelper)
+		/// <param name="navigationManager">Uri helper</param>
+		public RoutingFeature(NavigationManager navigationManager)
 		{
-			InitialUrl = uriHelper.GetAbsoluteUri();
+			InitialUrl = navigationManager.Uri;
 		}
 	}
 }
