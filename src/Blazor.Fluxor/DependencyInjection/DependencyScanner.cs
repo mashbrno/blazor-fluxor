@@ -18,7 +18,7 @@ namespace Blazor.Fluxor.DependencyInjection
 			scanIncludeList = scanIncludeList ?? new List<AssemblyScanSettings>();
 
 			List<Assembly> allCandidateAssemblies = assembliesToScan.Select(x => x.Assembly)
-				.Union(scanWhitelist.Select(x => x.Assembly))
+				.Union(scanIncludeList.Select(x => x.Assembly))
 				.Distinct()
 				.ToList();
 			IEnumerable<Type> allCandidateTypes = allCandidateAssemblies.SelectMany(a => a.GetTypes())
