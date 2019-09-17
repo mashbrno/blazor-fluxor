@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Blazor.Fluxor.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.AspNetCore.Components.RenderTree;
 
 namespace Blazor.Fluxor
 {
@@ -30,6 +29,7 @@ namespace Blazor.Fluxor
 		private int BeginMiddlewareChangeCount;
 		private bool HasActivatedStore;
 		private bool IsInsideMiddlewareChange => BeginMiddlewareChangeCount > 0;
+		private Action<IFeature, object> IFeatureReceiveDispatchNotificationFromStore;
 
 		/// <summary>
 		/// Creates an instance of the store
@@ -37,6 +37,12 @@ namespace Blazor.Fluxor
 		/// <param name="browserInteropService">The BrowserInteropService the Browser will use to initialise the store</param>
 		public Store(IBrowserInteropService browserInteropService)
 		{
+			MethodInfo dispatchNotifictionFromStoreMethodInfo =
+				typeof(IFeature)
+				.GetMethod(nameof(IFeature.ReceiveDispatchNotificationFromStore));
+			IFeatureReceiveDispatchNotificationFromStore = (Action<IFeature, object>)
+				Delegate.CreateDelegate(typeof(Action<IFeature, object>), dispatchNotifictionFromStoreMethodInfo);
+
 			BrowserInteropService = browserInteropService;
 			BrowserInteropService.PageLoaded += OnPageLoaded;
 			Dispatch(new StoreInitializedAction());
@@ -178,17 +184,6 @@ namespace Blazor.Fluxor
 			Middlewares.ForEach(x => x.AfterDispatch(actionJustDispatched));
 		}
 
-		private void NotifyFeatureOfDispatch(IFeature feature, object action)
-		{
-			string methodName = nameof(IFeature.ReceiveDispatchNotificationFromStore);
-			// We need the generic method for the feature instance
-			MethodInfo methodInfo = feature
-				.GetType()
-				.GetMethod(methodName);
-
-			methodInfo.Invoke(feature, new object[] { action });
-		}
-
 		private void ActivateStore()
 		{
 			if (HasActivatedStore)
@@ -214,9 +209,7 @@ namespace Blazor.Fluxor
 
 					// Notify all features of this action
 					foreach (var featureInstance in FeaturesByName.Values)
-					{
-						NotifyFeatureOfDispatch(featureInstance, nextActionToDequeue);
-					};
+						IFeatureReceiveDispatchNotificationFromStore(featureInstance, nextActionToDequeue);
 
 					ExecuteMiddlewareAfterDispatch(nextActionToDequeue);
 

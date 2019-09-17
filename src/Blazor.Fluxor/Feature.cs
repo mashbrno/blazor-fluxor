@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace Blazor.Fluxor
 {
@@ -33,8 +32,8 @@ namespace Blazor.Fluxor
 		/// </summary>
 		protected readonly List<IReducer<TState>> Reducers = new List<IReducer<TState>>();
 
+		private MethodInfo BlazorComponentInvokeAsyncMethod;
 		private MethodInfo BlazorComponentStateHasChangedMethod;
-		private MethodInfo BlazorComponentInvokeMethod;
 		private List<WeakReference<ComponentBase>> ObservingComponents = new List<WeakReference<ComponentBase>>();
 
 		/// <summary>
@@ -43,8 +42,8 @@ namespace Blazor.Fluxor
 		public Feature()
 		{
 			State = GetInitialState();
+			BlazorComponentInvokeAsyncMethod = typeof(ComponentBase).GetMethod("InvokeAsync", BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(Action) }, null);
 			BlazorComponentStateHasChangedMethod = typeof(ComponentBase).GetMethod("StateHasChanged", BindingFlags.NonPublic | BindingFlags.Instance);
-			BlazorComponentInvokeMethod = typeof(ComponentBase).GetMethod("InvokeAsync", BindingFlags.NonPublic | BindingFlags.Instance, null, CallingConventions.Any, new Type[] { typeof(Action) }, null);
 		}
 
 		private TState _State;
@@ -112,12 +111,7 @@ namespace Blazor.Fluxor
 					// Keep a reference to the subscribers stop them being collected before we have finished
 					subscribers.Add(subscriber);
 					// Create a callback
-					Action workItem = () => { BlazorComponentStateHasChangedMethod.Invoke(subscriber, null); };
-					callbacks.Add(() =>
-					{
-						var res = (Task)BlazorComponentInvokeMethod.Invoke(subscriber, new object[] { workItem });
-						res.Wait();
-					});
+					callbacks.Add(() => BlazorComponentInvokeAsyncMethod.Invoke(subscriber, new object[] { new Action(() => BlazorComponentStateHasChangedMethod.Invoke(subscriber, null)) }));
 					// Add this observer to the replacement list
 					newStateChangedCallbacks.Add(subscription);
 				}

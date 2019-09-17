@@ -10,9 +10,9 @@
     <PackageProjectUrl>https://github.com/mrpmorris/blazor-fluxor</PackageProjectUrl>
     <PackageTags>blazor redux flux state</PackageTags>
     <RepositoryUrl>https://github.com/mrpmorris/blazor-fluxor</RepositoryUrl>
-    <AssemblyVersion>0.31.0.0</AssemblyVersion>
-    <FileVersion>0.31.0.0</FileVersion>
-    <Version>0.31.0.0-pre</Version>
+    <AssemblyVersion>0.32.0.0</AssemblyVersion>
+    <FileVersion>0.32.0.0</FileVersion>
+    <Version>0.32.0.0-pre</Version>
     <PackageLicenseFile>LICENCE</PackageLicenseFile>
     <PackageIconUrl>https://raw.githubusercontent.com/mrpmorris/blazor-fluxor/master/docs/images/blazor-fluxor-logo-small.png</PackageIconUrl>
   </PropertyGroup>
@@ -29,8 +29,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.0.0-preview9.19424.4" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0-preview9.19423.4" />
+    <Compile Remove="ReducerMethodAttribute.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.0.0-rc1.19457.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0-rc1.19456.10" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +42,7 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+    <None Include="ReducerMethodAttribute.cs" />
   </ItemGroup>
 
 </Project>
