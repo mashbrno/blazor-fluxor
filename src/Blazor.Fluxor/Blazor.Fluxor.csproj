@@ -1,48 +1,56 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Peter Morris</Authors>
-    <Company />
-    <Description>A zero-boilerplate Flux/Redux state library for Blazor</Description>
-    <Copyright>Peter Morris</Copyright>
-    <PackageProjectUrl>https://github.com/mrpmorris/blazor-fluxor</PackageProjectUrl>
-    <PackageTags>blazor redux flux state</PackageTags>
-    <RepositoryUrl>https://github.com/mrpmorris/blazor-fluxor</RepositoryUrl>
-    <AssemblyVersion>0.32.0.0</AssemblyVersion>
-    <FileVersion>0.32.0.0</FileVersion>
-    <Version>0.32.0.0-pre</Version>
-    <PackageLicenseFile>LICENCE</PackageLicenseFile>
-    <PackageIconUrl>https://raw.githubusercontent.com/mrpmorris/blazor-fluxor/master/docs/images/blazor-fluxor-logo-small.png</PackageIconUrl>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;netcoreapp2.2;netcoreapp3.0</TargetFrameworks>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Authors>Peter Morris</Authors>
+		<Company />
+		<Description>A zero-boilerplate Flux/Redux state library for Blazor</Description>
+		<Copyright>Peter Morris</Copyright>
+		<PackageProjectUrl>https://github.com/mrpmorris/blazor-fluxor</PackageProjectUrl>
+		<PackageTags>blazor redux flux state</PackageTags>
+		<RepositoryUrl>https://github.com/mrpmorris/blazor-fluxor</RepositoryUrl>
+		<AssemblyVersion>0.35.0.0</AssemblyVersion>
+		<FileVersion>0.35.0.0</FileVersion>
+		<Version>0.35.0.0-pre</Version>
+		<PackageLicenseFile>LICENCE</PackageLicenseFile>
+		<PackageIconUrl>https://raw.githubusercontent.com/mrpmorris/blazor-fluxor/master/docs/images/blazor-fluxor-logo-small.png</PackageIconUrl>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\Blazor.Fluxor.xml</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DocumentationFile>bin\Release\netstandard2.0\Blazor.Fluxor.xml</DocumentationFile>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<WarningsAsErrors />
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<WarningsAsErrors />
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="ReducerMethodAttribute.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.0.0-rc1.19457.4" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0-rc1.19456.10" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\LICENCE">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\..\LICENCE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="ReducerMethodAttribute.cs" />
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<IsPackable>true</IsPackable>
+		<BlazorLinkOnBuild>false</BlazorLinkOnBuild>
+		<LangVersion>7.3</LangVersion>
+	</PropertyGroup>
 
+	<ItemGroup>
+		<!-- .js/.css files will be referenced via <script>/<link> tags; other content files will just be included in the app's 'dist' directory without any tags referencing them -->
+		<EmbeddedResource Include="content\**\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\**\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\**" Exclude="**\*.js;**\*.css" LogicalName="blazor:file:%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
 </Project>

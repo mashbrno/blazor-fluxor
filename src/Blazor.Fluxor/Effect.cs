@@ -18,7 +18,7 @@ namespace Blazor.Fluxor
 		/// </summary>
 		public bool ShouldReactToAction(object action)
 		{
-			return typeof(TTriggerAction).IsAssignableFrom(action.GetType());
+			return action is TTriggerAction;
 		}
 
 		Task IEffect.HandleAsync(object action, IDispatcher dispatcher)

@@ -133,29 +133,26 @@ namespace Blazor.Fluxor
 		{
 			return (RenderTreeBuilder renderer) =>
 			{
-				var scriptsBuilder = new StringBuilder();
-				scriptsBuilder.AppendLine("if (window.DotNet) {");
+				var script = new StringBuilder();
+				script.AppendLine("if (window.DotNet) {");
 				{
-					scriptsBuilder.AppendLine("setTimeout(function() {");
+					foreach (IMiddleware middleware in Middlewares)
 					{
-						foreach (IMiddleware middleware in Middlewares)
+						string middlewareScript = middleware.GetClientScripts();
+						if (middlewareScript != null)
 						{
-							string middlewareScript = middleware.GetClientScripts();
-							if (middlewareScript != null)
-							{
-								scriptsBuilder.AppendLine($"// Middleware scripts: {middleware.GetType().FullName}");
-								scriptsBuilder.AppendLine($"{middlewareScript}");
-							}
+							script.AppendLine($"// Middleware scripts: {middleware.GetType().FullName}");
+							script.AppendLine($"{middlewareScript}");
 						}
-						scriptsBuilder.AppendLine("//Fluxor");
-						scriptsBuilder.AppendLine(GetClientScripts());
 					}
-					scriptsBuilder.AppendLine("}, 0);"); // End of setTimeout
+					script.AppendLine("//Fluxor");
+					script.AppendLine(GetClientScripts());
 				}
-				scriptsBuilder.AppendLine("}");
+				script.AppendLine("}");
 
 				renderer.OpenElement(1, "script");
-				renderer.AddMarkupContent(2, scriptsBuilder.ToString());
+				renderer.AddAttribute(2, "id", "InitializeFluxor");
+				renderer.AddMarkupContent(3, script.ToString());
 				renderer.CloseElement();
 			};
 		}

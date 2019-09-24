@@ -122,14 +122,12 @@ If you recall, earlier I recommended you make all of the properties of your stat
 ```c#
 using Blazor.Fluxor;
 
-namespace CounterSample.Client.Store.Counter.IncrementCounter
+namespace CounterSample.Client.Store.Counter
 {
 	public class IncrementCounterReducer : Reducer<CounterState, IncrementCounterAction>
 	{
-		public override CounterState Reduce(CounterState state, IncrementCounterAction action)
-		{
-			return new CounterState(state.ClickCount + 1);
-		}
+		public override CounterState Reduce(CounterState state, IncrementCounterAction action) =>
+			new CounterState(state.ClickCount + 1);
 	}
 }
 ```
@@ -142,3 +140,25 @@ namespace CounterSample.Client.Store.Counter.IncrementCounter
 If the `Reducer` does not modify the state then you can simply return the original state object passed into the `Reduce` method.
 
 Note that the folder structure and naming conventions used here are only recommendations. You may wish to have separate folders for Actions, Reducers, and Effects.
+
+### Alternative reducer implementation
+
+Alternatively, we can implement multiple reducers in a single class using the `[ReducerMethod]` attribute.
+
+```c#
+using Blazor.Fluxor;
+
+namespace CounterSample.Client.Store.Counter.IncrementCounter
+{
+	public static class Reducers
+	{
+		[ReducerMethod]
+		public static CounterState ReduceIncrementCounterAction(CounterState state, IncrementCounterAction action) =>
+			new CounterState(state.ClickCount + 1);
+	}
+}
+```
+- The class can be instance or static
+- it can require injected dependencies
+- the name of the method is irrelevant
+- we can have as many reducers in a single class as we wish.

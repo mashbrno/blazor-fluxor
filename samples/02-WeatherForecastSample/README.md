@@ -334,5 +334,44 @@ The preceding code will add a subscription to the state. Whenever the state chan
 ## And finally...
 Run the application and go to the `Fetch Data` link on the page. You should see the data load from the server. If it is too quick for you to see your `Loading...` message then open the `SampleDataController` in your Server's `Controllers` folder and add `await Task.Delay(2000);` at the top of the `WeatherForecasts()` method.
 
+### Alternative effect implementation
+
+Alternatively, we can implement multiple effects in a single class using the `[EffectMethod]` attribute.
+
+```c#
+using Blazor.Fluxor;
+
+namespace CounterSample.Client.Store.Counter.IncrementCounter
+{
+	public class Effects
+	{
+		private readonly HttpClient HttpClient;
+
+		public GetForecastDataEffect(HttpClient httpClient)
+		{
+			HttpClient = httpClient;
+		}
+
+		[EffectMethod]
+		protected async Task HandleGetForecastDataAction(GetForecastDataAction action, IDispatcher dispatcher)
+		{
+			try
+			{
+				WeatherForecast[] forecasts =
+					await HttpClient.GetJsonAsync<WeatherForecast[]>("/api/SampleData/WeatherForecasts");
+				dispatcher.Dispatch(new GetForecastDataSuccessAction(forecasts));
+			}
+			catch (Exception e)
+			{
+				dispatcher.Dispatch(new GetForecastDataFailedAction(errorMessage: e.Message));
+			}
+		}
+	}
+}
+```
+- The class can be instance or static
+- it can require injected dependencies
+- the name of the method is irrelevant
+- we can have as many effects in a single class as we wish.
 
 [Tutorial 1]: <https://github.com/mrpmorris/blazor-fluxor/tree/master/samples/01-CounterSample>
