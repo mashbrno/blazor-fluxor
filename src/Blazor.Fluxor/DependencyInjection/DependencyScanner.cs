@@ -25,10 +25,6 @@ namespace Blazor.Fluxor.DependencyInjection
 				.Union(scanIncludeList.Select(x => x.Assembly))
 				.Distinct()
 				.ToList();
-			IEnumerable<Type> allCandidateTypes = allCandidateAssemblies.SelectMany(a => a.GetTypes())
-				.Where(t => !t.IsAbstract)
-				.ToList();
-			
 
 			IEnumerable<AssemblyScanSettings> scanExcludeList =
 				MiddlewareClassesDiscovery.FindMiddlewareLocations(allCandidateAssemblies);
